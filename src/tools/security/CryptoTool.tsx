@@ -62,7 +62,7 @@ export function CryptoTool() {
         <textarea className="mono" value={state.input} onChange={(event) => setState((current) => ({ ...current, input: event.target.value }))} />
         <button className="button primary" disabled={!canRun} onClick={run}>{t.run}</button>
       </Panel>
-      <Panel title={t.output}><textarea className="output-area mono" readOnly value={output} /><div className="action-row"><CopyButton value={output} /></div></Panel>
+      <Panel title={t.output}><textarea className="output-area crypto-output-balanced mono" readOnly value={output} /><div className="action-row"><CopyButton value={output} /></div></Panel>
     </div>
   )
 }

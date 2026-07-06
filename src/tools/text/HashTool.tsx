@@ -17,7 +17,7 @@ export function HashTool() {
   useEffect(() => { digestText(state.input, state.algorithm).then(setOutput) }, [state.input, state.algorithm])
   return (
     <div className="tool-workspace two-col">
-      <Panel title={t.input} actions={<button className="text-button" type="button" onClick={resetState}>{t.restoreDefaults}</button>}><textarea value={state.input} onChange={(event) => setState((current) => ({ ...current, input: event.target.value }))} /></Panel>
+      <Panel title={t.input} actions={<button className="text-button" type="button" onClick={resetState}>{t.restoreDefaults}</button>}><textarea className="hash-input-balanced" value={state.input} onChange={(event) => setState((current) => ({ ...current, input: event.target.value }))} /></Panel>
       <Panel title={t.output}>
         <select value={state.algorithm} onChange={(event) => setState((current) => ({ ...current, algorithm: event.target.value as HashToolState['algorithm'] }))}><option>SHA-1</option><option>SHA-256</option><option>SHA-512</option></select>
         <textarea className="output-area mono" readOnly value={output} />

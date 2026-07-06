@@ -17,9 +17,9 @@ export function JsonTool() {
   }, [state.input, state.compact, t.invalidJson])
   return (
     <div className="tool-workspace two-col">
-      <Panel title={t.input} actions={<button className="text-button" type="button" onClick={resetState}>{t.restoreDefaults}</button>}><textarea className="mono" value={state.input} onChange={(event) => setState((current) => ({ ...current, input: event.target.value }))} /></Panel>
+      <Panel title={t.input} actions={<button className="text-button" type="button" onClick={resetState}>{t.restoreDefaults}</button>}><textarea className="large-tool-area mono" value={state.input} onChange={(event) => setState((current) => ({ ...current, input: event.target.value }))} /></Panel>
       <Panel title={t.output} actions={<label className="inline-check"><input type="checkbox" checked={state.compact} onChange={(event) => setState((current) => ({ ...current, compact: event.target.checked }))} /> {t.minify}</label>}>
-        <textarea className="output-area mono" readOnly value={output} />
+        <textarea className="output-area large-tool-area mono" readOnly value={output} />
         <div className="action-row"><CopyButton value={output} /></div>
       </Panel>
     </div>

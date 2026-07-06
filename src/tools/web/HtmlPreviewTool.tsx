@@ -51,14 +51,14 @@ export function HtmlPreviewTool() {
 
   return (
     <div className="tool-workspace two-col wide html-preview-workspace">
-      <Panel title="HTML" actions={<button className="text-button" type="button" onClick={resetInput}>{t.restoreDefaults}</button>}><textarea className="mono tall html-preview-source" value={input} onChange={(event) => setInput(event.target.value)} /></Panel>
+      <Panel title="HTML" actions={<button className="text-button" type="button" onClick={resetInput}>{t.restoreDefaults}</button>}><textarea className="large-tool-area mono tall html-preview-source" value={input} onChange={(event) => setInput(event.target.value)} /></Panel>
       <section className="tool-section html-preview-section">
         <div className="tool-section-head">
           <div className="tool-section-title">{t.preview}</div>
           <div className="tool-section-actions"><button className="text-button" type="button" onClick={openInNewWindow}>{t.openPreviewWindow}</button></div>
         </div>
         {openError && <p className="error-text">{t.popupBlocked}</p>}
-        <iframe className="preview-frame" title={t.preview} sandbox="allow-scripts allow-modals" referrerPolicy="no-referrer" srcDoc={input} />
+        <iframe className="preview-frame large-tool-area" title={t.preview} sandbox="allow-scripts allow-modals" referrerPolicy="no-referrer" srcDoc={input} />
       </section>
     </div>
   )

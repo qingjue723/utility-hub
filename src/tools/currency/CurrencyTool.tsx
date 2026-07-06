@@ -35,6 +35,12 @@ function formatRate(value: number) {
   return rateFormatter.format(value)
 }
 
+function amountParts(value: string) {
+  const match = value.match(/^(.*?)([.,]\d+)$/)
+  if (!match) return { integer: value, decimal: '' }
+  return { integer: match[1], decimal: match[2] }
+}
+
 function moveItem(items: string[], activeId: string, overId: string) {
   const oldIndex = items.indexOf(activeId)
   const newIndex = items.indexOf(overId)
@@ -241,12 +247,27 @@ function CurrencyCard({
           </div>
           <em>{currency.symbol}</em>
         </div>
-        <input className="text-input currency-input" inputMode="decimal" value={value} onChange={(event) => onAmountChange(event.target.value)} placeholder="0.00" />
+        <label className="currency-amount-field">
+          <span className="currency-amount-visual" aria-hidden="true">
+            <AmountParts value={value || '0.00'} placeholder={!value} />
+          </span>
+          <input className="text-input currency-input" inputMode="decimal" value={value} onChange={(event) => onAmountChange(event.target.value)} placeholder="0.00" />
+        </label>
         <small>{rate}</small>
       </div>
       <button className="text-button currency-remove" type="button" onClick={onRemove} aria-label={`${removeLabel} ${currency.code}`}>
         <X size={15} />
       </button>
     </article>
+  )
+}
+
+function AmountParts({ value, placeholder = false }: { value: string; placeholder?: boolean }) {
+  const { integer, decimal } = amountParts(value)
+  return (
+    <>
+      <span className={placeholder ? 'currency-amount-placeholder' : undefined}>{integer}</span>
+      {decimal && <span className="currency-amount-decimal">{decimal}</span>}
+    </>
   )
 }

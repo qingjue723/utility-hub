@@ -173,7 +173,7 @@ export function PasswordTool() {
             ))}
           </div>
         ) : (
-          <textarea className="output-area mono" readOnly value={result.value} placeholder={t.clickGenerate} />
+          <textarea className="output-area password-output-empty mono" readOnly value={result.value} placeholder={t.clickGenerate} />
         )}
         {result.hint && <p className="subtle-line">{result.hint}</p>}
         <div className="action-row"><CopyButton value={result.value} label={result.items?.length ? t.copyAll : undefined} /></div>

@@ -132,6 +132,10 @@ textarea:focus, select:focus, .text-input:focus { border-color: var(--border-hov
 textarea { min-height: 280px; padding: 15px; resize: vertical; line-height: 1.62; }
 textarea.small { min-height: 116px; }
 textarea.tall { min-height: 520px; }
+textarea.large-tool-area, .preview-frame.large-tool-area { min-height: 520px; }
+textarea.password-output-empty { min-height: 520px; }
+textarea.hash-input-balanced { min-height: 334px; }
+textarea.crypto-output-balanced { min-height: 336px; }
 .text-input { height: 44px; padding: 0 13px; margin-bottom: 12px; }
 select { height: 42px; padding: 0 12px; margin-bottom: 12px; }
 .mono { font-family: inherit; font-size: 0.92rem; }
@@ -156,6 +160,7 @@ select { height: 42px; padding: 0 12px; margin-bottom: 12px; }
 .preview-frame { width: 100%; border: 1px solid var(--border); border-radius: 10px; background: #fff; }
 .totp-code { color: var(--accent); font-size: clamp(3rem, 12vw, 6rem); font-weight: 760; line-height: 1; letter-spacing: -0.08em; }
 .subtle-line { margin: 10px 0 16px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.list-line-count { margin-bottom: 0; }
 .error-text { margin: 0 0 18px; color: #a33a35; background: rgba(163, 58, 53, 0.1); border: 1px solid rgba(163, 58, 53, 0.22); border-radius: var(--radius-md); padding: 12px 14px; line-height: 1.55; }
 .result-list { display: grid; max-height: min(68dvh, 640px); overflow: auto; border-bottom: 1px solid var(--line-soft); scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--accent) 34%, transparent) transparent; }
 .result-list::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -238,7 +243,13 @@ select { height: 42px; padding: 0 12px; margin-bottom: 12px; }
 .currency-card-head strong { color: var(--fg); font-size: 18px; line-height: 1.1; letter-spacing: -0.01em; }
 .currency-card-head span { min-width: 0; overflow: hidden; color: var(--muted); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
 .currency-card-head em { flex: 0 0 auto; color: var(--accent); font-size: 15px; font-style: normal; }
-.currency-input { height: 42px; margin-bottom: 0; font-size: 16px; font-variant-numeric: tabular-nums; }
+.currency-amount-field { position: relative; min-width: 0; display: block; }
+.currency-amount-visual { height: 42px; display: flex; align-items: center; overflow: hidden; border: 1px solid var(--border); border-radius: 10px; padding: 0 13px; color: var(--fg); background: color-mix(in srgb, var(--card-muted) 48%, transparent); font-size: 16px; font-variant-numeric: tabular-nums; white-space: nowrap; pointer-events: none; }
+.currency-amount-decimal { color: var(--muted); font-size: 0.82em; letter-spacing: -0.01em; transform: translateY(0.16em); }
+.currency-amount-placeholder { color: var(--muted); }
+.currency-input { position: absolute; inset: 0; height: 42px; margin-bottom: 0; border-color: transparent; color: transparent; background: transparent; font-size: 16px; font-variant-numeric: tabular-nums; caret-color: var(--fg); }
+.currency-input:focus { border-color: var(--border-hover); background: transparent; }
+.currency-amount-field:focus-within .currency-amount-visual { border-color: var(--border-hover); background: color-mix(in srgb, var(--card-bg) 62%, transparent); }
 .currency-card small { min-height: 18px; color: var(--muted-strong); font-size: 12px; line-height: 1.4; }
 .currency-remove { width: 24px; height: 28px; display: grid; place-items: center; justify-self: end; color: var(--muted); }
 .currency-remove:hover { color: #a33a35; }
@@ -290,4 +301,7 @@ select { height: 42px; padding: 0 12px; margin-bottom: 12px; }
   .currency-grid, .currency-picker { grid-template-columns: 1fr; }
   .currency-card { min-height: 136px; }
   textarea, textarea.tall, .preview-frame { min-height: 360px; }
+  textarea.large-tool-area, .preview-frame.large-tool-area { min-height: 520px; }
+  textarea.password-output-empty { min-height: 520px; }
+  textarea.hash-input-balanced, textarea.crypto-output-balanced { min-height: 360px; }
 }
