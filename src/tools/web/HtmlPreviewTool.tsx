@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useLocale } from '../../app/providers/LocaleProvider'
 import { Panel } from '../../components/Panel'
+import { usePersistentState } from '../../hooks/usePersistentState'
 
 function makeStarter(title: string, body: string) {
   return `<!doctype html>\n<html>\n  <head>\n    <meta charset="utf-8" />\n    <style>body{font-family:serif;padding:40px;background:#f7f4ee;color:#1d1d1b} h1{font-size:42px}</style>\n  </head>\n  <body>\n    <h1>${title}</h1>\n    <p>${body}</p>\n  </body>\n</html>`
@@ -31,7 +32,7 @@ function makePreviewWindowDocument(html: string) {
 export function HtmlPreviewTool() {
   const { t } = useLocale()
   const starter = makeStarter(t.sampleHtmlTitle, t.sampleHtmlBody)
-  const [input, setInput] = useState(starter)
+  const [input, setInput, resetInput] = usePersistentState('utility-hub-tool-state:html-preview', () => starter)
   const [openError, setOpenError] = useState(false)
 
   function openInNewWindow() {
@@ -50,7 +51,7 @@ export function HtmlPreviewTool() {
 
   return (
     <div className="tool-workspace two-col wide html-preview-workspace">
-      <Panel title="HTML"><textarea className="mono tall html-preview-source" value={input} onChange={(event) => setInput(event.target.value)} /></Panel>
+      <Panel title="HTML" actions={<button className="text-button" type="button" onClick={resetInput}>{t.restoreDefaults}</button>}><textarea className="mono tall html-preview-source" value={input} onChange={(event) => setInput(event.target.value)} /></Panel>
       <section className="tool-section html-preview-section">
         <div className="tool-section-head">
           <div className="tool-section-title">{t.preview}</div>

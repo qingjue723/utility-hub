@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useLocale } from '../../app/providers/LocaleProvider'
 import { CopyButton } from '../../components/CopyButton'
 import { Panel } from '../../components/Panel'
+import { usePersistentState } from '../../hooks/usePersistentState'
 
 type TotpConfig = {
   issuer: string
@@ -54,7 +55,7 @@ function createTotp(config: TotpConfig) {
 
 export function TotpTool() {
   const { t } = useLocale()
-  const [rawInput, setRawInput] = useState('JBSWY3DPEHPK3PXP')
+  const [rawInput, setRawInput, resetRawInput] = usePersistentState('utility-hub-tool-state:totp-2fa', () => 'JBSWY3DPEHPK3PXP')
   const [now, setNow] = useState(Date.now())
   const [qr, setQr] = useState('')
 
@@ -109,6 +110,7 @@ export function TotpTool() {
   return (
     <div className="tool-workspace two-col">
       <Panel title={t.secret}>
+        <div className="action-row"><button className="text-button" type="button" onClick={resetRawInput}>{t.restoreDefaults}</button></div>
         <label className="field">
           <span>{t.totpInputLabel}</span>
           <textarea className="mono small" value={rawInput} onChange={(event) => setRawInput(event.target.value)} />

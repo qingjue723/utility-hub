@@ -1,4 +1,4 @@
-import { BracketsCurly, Code, Fingerprint, Hash, Key, LinkSimple, ListChecks, LockKey, MapPin, Password } from '@phosphor-icons/react'
+import { BracketsCurly, Code, CurrencyDollar, Fingerprint, Hash, Key, LinkSimple, ListChecks, LockKey, MapPin, Password } from '@phosphor-icons/react'
 import type { Icon } from '@phosphor-icons/react'
 import type { ComponentType } from 'react'
 
@@ -84,6 +84,15 @@ export const tools: ToolDefinition[] = [
     keywords: ['json', 'format', 'minify'],
     icon: Fingerprint,
     load: () => import('./text/JsonTool').then((module) => ({ default: module.JsonTool })),
+  },
+  {
+    id: 'currency-converter',
+    category: 'Finance',
+    name: { zh: '实时汇率转换', en: 'Live Currency Converter' },
+    description: { zh: '多币种实时换算，支持编辑显示列表和拖拽排序。', en: 'Live multi-currency conversion with editable cards and drag sorting.' },
+    keywords: ['currency', 'exchange', 'forex', 'rate', 'money', '汇率', '货币', '外汇', '换算', '转换'],
+    icon: CurrencyDollar,
+    load: () => import('./currency/CurrencyTool').then((module) => ({ default: module.CurrencyTool })),
   },
   {
     id: 'hash-generator',

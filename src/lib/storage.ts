@@ -14,3 +14,11 @@ export function writeStoredValue<T>(key: string, value: T) {
     // Storage may be unavailable in private contexts.
   }
 }
+
+export function removeStoredValue(key: string) {
+  try {
+    localStorage.removeItem(key)
+  } catch {
+    // Storage may be unavailable in private contexts.
+  }
+}

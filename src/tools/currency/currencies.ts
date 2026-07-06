@@ -1,0 +1,36 @@
+export type CurrencyMeta = {
+  code: string
+  nameEn: string
+  nameZh: string
+  symbol?: string
+}
+
+const names: Record<string, [string, string, string?]> = {
+  AED: ['UAE Dirham', '阿联酋迪拉姆', 'د.إ'], AFN: ['Afghan Afghani', '阿富汗尼', '؋'], ALL: ['Albanian Lek', '阿尔巴尼亚列克', 'L'], AMD: ['Armenian Dram', '亚美尼亚德拉姆', '֏'], ANG: ['Netherlands Antillean Guilder', '荷属安的列斯盾', 'ƒ'], AOA: ['Angolan Kwanza', '安哥拉宽扎', 'Kz'], ARS: ['Argentine Peso', '阿根廷比索', '$'], AUD: ['Australian Dollar', '澳元', 'A$'], AWG: ['Aruban Florin', '阿鲁巴弗罗林', 'ƒ'], AZN: ['Azerbaijani Manat', '阿塞拜疆马纳特', '₼'],
+  BAM: ['Bosnia-Herzegovina Convertible Mark', '波黑可兑换马克', 'KM'], BBD: ['Barbadian Dollar', '巴巴多斯元', '$'], BDT: ['Bangladeshi Taka', '孟加拉塔卡', '৳'], BGN: ['Bulgarian Lev', '保加利亚列弗', 'лв'], BHD: ['Bahraini Dinar', '巴林第纳尔', 'BD'], BIF: ['Burundian Franc', '布隆迪法郎', 'FBu'], BMD: ['Bermudian Dollar', '百慕大元', '$'], BND: ['Brunei Dollar', '文莱元', 'B$'], BOB: ['Bolivian Boliviano', '玻利维亚诺', 'Bs'], BRL: ['Brazilian Real', '巴西雷亚尔', 'R$'], BSD: ['Bahamian Dollar', '巴哈马元', '$'], BTN: ['Bhutanese Ngultrum', '不丹努尔特鲁姆', 'Nu'], BWP: ['Botswana Pula', '博茨瓦纳普拉', 'P'], BYN: ['Belarusian Ruble', '白俄罗斯卢布', 'Br'], BZD: ['Belize Dollar', '伯利兹元', 'BZ$'],
+  CAD: ['Canadian Dollar', '加元', 'C$'], CDF: ['Congolese Franc', '刚果法郎', 'FC'], CHF: ['Swiss Franc', '瑞士法郎', 'CHF'], CLP: ['Chilean Peso', '智利比索', '$'], CNY: ['Chinese Yuan', '人民币', '¥'], COP: ['Colombian Peso', '哥伦比亚比索', '$'], CRC: ['Costa Rican Colon', '哥斯达黎加科朗', '₡'], CUP: ['Cuban Peso', '古巴比索', '$'], CVE: ['Cape Verdean Escudo', '佛得角埃斯库多', '$'], CZK: ['Czech Koruna', '捷克克朗', 'Kč'],
+  DJF: ['Djiboutian Franc', '吉布提法郎', 'Fdj'], DKK: ['Danish Krone', '丹麦克朗', 'kr'], DOP: ['Dominican Peso', '多米尼加比索', 'RD$'], DZD: ['Algerian Dinar', '阿尔及利亚第纳尔', 'DA'],
+  EGP: ['Egyptian Pound', '埃及镑', 'E£'], ERN: ['Eritrean Nakfa', '厄立特里亚纳克法', 'Nfk'], ETB: ['Ethiopian Birr', '埃塞俄比亚比尔', 'Br'], EUR: ['Euro', '欧元', '€'],
+  FJD: ['Fijian Dollar', '斐济元', 'FJ$'], FKP: ['Falkland Islands Pound', '福克兰群岛镑', '£'], FOK: ['Faroese Krona', '法罗群岛克朗', 'kr'], GBP: ['British Pound', '英镑', '£'], GEL: ['Georgian Lari', '格鲁吉亚拉里', '₾'], GGP: ['Guernsey Pound', '根西镑', '£'], GHS: ['Ghanaian Cedi', '加纳塞地', '₵'], GIP: ['Gibraltar Pound', '直布罗陀镑', '£'], GMD: ['Gambian Dalasi', '冈比亚达拉西', 'D'], GNF: ['Guinean Franc', '几内亚法郎', 'FG'], GTQ: ['Guatemalan Quetzal', '危地马拉格查尔', 'Q'], GYD: ['Guyanese Dollar', '圭亚那元', 'G$'],
+  HKD: ['Hong Kong Dollar', '港元', 'HK$'], HNL: ['Honduran Lempira', '洪都拉斯伦皮拉', 'L'], HRK: ['Croatian Kuna', '克罗地亚库纳', 'kn'], HTG: ['Haitian Gourde', '海地古德', 'G'], HUF: ['Hungarian Forint', '匈牙利福林', 'Ft'],
+  IDR: ['Indonesian Rupiah', '印尼盾', 'Rp'], ILS: ['Israeli New Shekel', '以色列新谢克尔', '₪'], IMP: ['Isle of Man Pound', '马恩岛镑', '£'], INR: ['Indian Rupee', '印度卢比', '₹'], IQD: ['Iraqi Dinar', '伊拉克第纳尔', 'ع.د'], IRR: ['Iranian Rial', '伊朗里亚尔', '﷼'], ISK: ['Icelandic Krona', '冰岛克朗', 'kr'],
+  JEP: ['Jersey Pound', '泽西镑', '£'], JMD: ['Jamaican Dollar', '牙买加元', 'J$'], JOD: ['Jordanian Dinar', '约旦第纳尔', 'JD'], JPY: ['Japanese Yen', '日元', '¥'],
+  KES: ['Kenyan Shilling', '肯尼亚先令', 'KSh'], KGS: ['Kyrgyzstani Som', '吉尔吉斯斯坦索姆', 'с'], KHR: ['Cambodian Riel', '柬埔寨瑞尔', '៛'], KID: ['Kiribati Dollar', '基里巴斯元', '$'], KMF: ['Comorian Franc', '科摩罗法郎', 'CF'], KRW: ['South Korean Won', '韩元', '₩'], KWD: ['Kuwaiti Dinar', '科威特第纳尔', 'KD'], KYD: ['Cayman Islands Dollar', '开曼群岛元', 'CI$'], KZT: ['Kazakhstani Tenge', '哈萨克斯坦坚戈', '₸'],
+  LAK: ['Lao Kip', '老挝基普', '₭'], LBP: ['Lebanese Pound', '黎巴嫩镑', 'L£'], LKR: ['Sri Lankan Rupee', '斯里兰卡卢比', 'Rs'], LRD: ['Liberian Dollar', '利比里亚元', 'L$'], LSL: ['Lesotho Loti', '莱索托洛蒂', 'L'], LYD: ['Libyan Dinar', '利比亚第纳尔', 'LD'],
+  MAD: ['Moroccan Dirham', '摩洛哥迪拉姆', 'DH'], MDL: ['Moldovan Leu', '摩尔多瓦列伊', 'L'], MGA: ['Malagasy Ariary', '马达加斯加阿里亚里', 'Ar'], MKD: ['Macedonian Denar', '北马其顿代纳尔', 'ден'], MMK: ['Myanmar Kyat', '缅甸元', 'K'], MNT: ['Mongolian Tugrik', '蒙古图格里克', '₮'], MOP: ['Macanese Pataca', '澳门元', 'MOP$'], MRU: ['Mauritanian Ouguiya', '毛里塔尼亚乌吉亚', 'UM'], MUR: ['Mauritian Rupee', '毛里求斯卢比', '₨'], MVR: ['Maldivian Rufiyaa', '马尔代夫拉菲亚', 'Rf'], MWK: ['Malawian Kwacha', '马拉维克瓦查', 'MK'], MXN: ['Mexican Peso', '墨西哥比索', 'MX$'], MYR: ['Malaysian Ringgit', '马来西亚林吉特', 'RM'], MZN: ['Mozambican Metical', '莫桑比克梅蒂卡尔', 'MT'],
+  NAD: ['Namibian Dollar', '纳米比亚元', 'N$'], NGN: ['Nigerian Naira', '尼日利亚奈拉', '₦'], NIO: ['Nicaraguan Cordoba', '尼加拉瓜科多巴', 'C$'], NOK: ['Norwegian Krone', '挪威克朗', 'kr'], NPR: ['Nepalese Rupee', '尼泊尔卢比', '₨'], NZD: ['New Zealand Dollar', '新西兰元', 'NZ$'],
+  OMR: ['Omani Rial', '阿曼里亚尔', 'OMR'], PAB: ['Panamanian Balboa', '巴拿马巴波亚', 'B/.'], PEN: ['Peruvian Sol', '秘鲁索尔', 'S/'], PGK: ['Papua New Guinean Kina', '巴布亚新几内亚基那', 'K'], PHP: ['Philippine Peso', '菲律宾比索', '₱'], PKR: ['Pakistani Rupee', '巴基斯坦卢比', '₨'], PLN: ['Polish Zloty', '波兰兹罗提', 'zł'], PYG: ['Paraguayan Guarani', '巴拉圭瓜拉尼', '₲'],
+  QAR: ['Qatari Riyal', '卡塔尔里亚尔', 'QR'], RON: ['Romanian Leu', '罗马尼亚列伊', 'lei'], RSD: ['Serbian Dinar', '塞尔维亚第纳尔', 'дин'], RUB: ['Russian Ruble', '俄罗斯卢布', '₽'], RWF: ['Rwandan Franc', '卢旺达法郎', 'FRw'],
+  SAR: ['Saudi Riyal', '沙特里亚尔', 'SR'], SBD: ['Solomon Islands Dollar', '所罗门群岛元', 'SI$'], SCR: ['Seychellois Rupee', '塞舌尔卢比', '₨'], SDG: ['Sudanese Pound', '苏丹镑', 'SDG'], SEK: ['Swedish Krona', '瑞典克朗', 'kr'], SGD: ['Singapore Dollar', '新加坡元', 'S$'], SHP: ['Saint Helena Pound', '圣赫勒拿镑', '£'], SLE: ['Sierra Leonean Leone', '塞拉利昂利昂', 'Le'], SLL: ['Sierra Leonean Leone', '塞拉利昂旧利昂', 'Le'], SOS: ['Somali Shilling', '索马里先令', 'Sh'], SRD: ['Surinamese Dollar', '苏里南元', '$'], SSP: ['South Sudanese Pound', '南苏丹镑', '£'], STN: ['Sao Tome and Principe Dobra', '圣多美和普林西比多布拉', 'Db'], SYP: ['Syrian Pound', '叙利亚镑', '£'], SZL: ['Eswatini Lilangeni', '斯威士兰里兰吉尼', 'L'],
+  THB: ['Thai Baht', '泰铢', '฿'], TJS: ['Tajikistani Somoni', '塔吉克斯坦索莫尼', 'ЅМ'], TMT: ['Turkmenistani Manat', '土库曼斯坦马纳特', 'm'], TND: ['Tunisian Dinar', '突尼斯第纳尔', 'DT'], TOP: ['Tongan Paanga', '汤加潘加', 'T$'], TRY: ['Turkish Lira', '土耳其里拉', '₺'], TTD: ['Trinidad and Tobago Dollar', '特立尼达和多巴哥元', 'TT$'], TVD: ['Tuvaluan Dollar', '图瓦卢元', '$'], TWD: ['New Taiwan Dollar', '新台币', 'NT$'], TZS: ['Tanzanian Shilling', '坦桑尼亚先令', 'TSh'],
+  UAH: ['Ukrainian Hryvnia', '乌克兰格里夫纳', '₴'], UGX: ['Ugandan Shilling', '乌干达先令', 'USh'], USD: ['US Dollar', '美元', '$'], UYU: ['Uruguayan Peso', '乌拉圭比索', '$U'], UZS: ['Uzbekistani Som', '乌兹别克斯坦索姆', 'soʻm'],
+  VES: ['Venezuelan Bolivar', '委内瑞拉玻利瓦尔', 'Bs'], VND: ['Vietnamese Dong', '越南盾', '₫'], VUV: ['Vanuatu Vatu', '瓦努阿图瓦图', 'VT'], WST: ['Samoan Tala', '萨摩亚塔拉', 'T'], XAF: ['Central African CFA Franc', '中非法郎', 'FCFA'], XCD: ['East Caribbean Dollar', '东加勒比元', 'EC$'], XCG: ['Caribbean Guilder', '加勒比盾', 'Cg'], XDR: ['IMF Special Drawing Rights', '特别提款权', 'SDR'], XOF: ['West African CFA Franc', '西非法郎', 'CFA'], XPF: ['CFP Franc', '太平洋法郎', '₣'], YER: ['Yemeni Rial', '也门里亚尔', '﷼'], ZAR: ['South African Rand', '南非兰特', 'R'], ZMW: ['Zambian Kwacha', '赞比亚克瓦查', 'ZK'], ZWL: ['Zimbabwean Dollar', '津巴布韦元', 'Z$'],
+}
+
+export const currencies: CurrencyMeta[] = Object.entries(names).map(([code, [nameEn, nameZh, symbol]]) => ({ code, nameEn, nameZh, symbol }))
+
+export const defaultVisibleCurrencies = ['USD', 'EUR', 'CNY', 'JPY', 'GBP', 'AUD', 'CAD', 'HKD', 'SGD', 'CHF', 'KRW', 'THB']
+
+export function getCurrencyMeta(code: string) {
+  return currencies.find((currency) => currency.code === code)
+}

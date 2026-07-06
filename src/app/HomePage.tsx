@@ -12,6 +12,7 @@ const categoryLabelKeys = {
   Text: 'categoryText',
   Encoding: 'categoryEncoding',
   Data: 'categoryData',
+  Finance: 'categoryFinance',
   Generate: 'categoryGenerate',
   Web: 'categoryWeb',
 } as const

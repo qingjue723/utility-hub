@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useLocale } from '../../app/providers/LocaleProvider'
 import { CopyButton } from '../../components/CopyButton'
 import { Panel } from '../../components/Panel'
+import { usePersistentState } from '../../hooks/usePersistentState'
 import {
   defaultPassphraseOptions,
   defaultPasswordOptions,
@@ -23,110 +24,137 @@ import {
   type WordListKind,
 } from './generator'
 
+type PasswordToolState = {
+  mode: GeneratorMode
+  passwordOptions: PasswordOptions
+  passphraseOptions: PassphraseOptions
+  separatorKind: SeparatorKind
+  customSeparator: string
+  usernameOptions: UsernameOptions
+  resultCount: number
+}
+
+function defaultPasswordToolState(): PasswordToolState {
+  return {
+    mode: 'password',
+    passwordOptions: defaultPasswordOptions,
+    passphraseOptions: defaultPassphraseOptions,
+    separatorKind: 'hyphen',
+    customSeparator: '',
+    usernameOptions: defaultUsernameOptions,
+    resultCount: 10,
+  }
+}
+
 export function PasswordTool() {
   const { t } = useLocale()
-  const [mode, setMode] = useState<GeneratorMode>('password')
-  const [passwordOptions, setPasswordOptions] = useState<PasswordOptions>(defaultPasswordOptions)
-  const [passphraseOptions, setPassphraseOptions] = useState<PassphraseOptions>(defaultPassphraseOptions)
-  const [separatorKind, setSeparatorKind] = useState<SeparatorKind>('hyphen')
-  const [customSeparator, setCustomSeparator] = useState('')
-  const [usernameOptions, setUsernameOptions] = useState<UsernameOptions>(defaultUsernameOptions)
-  const [resultCount, setResultCount] = useState(10)
+  const [state, setState, resetState] = usePersistentState<PasswordToolState>('utility-hub-tool-state:password-generator', defaultPasswordToolState)
   const [result, setResult] = useState<GeneratedResult>({ value: '' })
 
+  function resetTool() {
+    resetState()
+    setResult({ value: '' })
+  }
+
   function generate() {
-    const count = Math.min(100, Math.max(1, Math.round(resultCount)))
-    if (mode === 'username' && usernameOptions.type === 'gmailAlias') {
-      setResult(generateGmailAliases(usernameOptions, count))
+    const count = Math.min(100, Math.max(1, Math.round(state.resultCount)))
+    if (state.mode === 'username' && state.usernameOptions.type === 'gmailAlias') {
+      setResult(generateGmailAliases(state.usernameOptions, count))
       return
     }
 
-    const generator = mode === 'password'
-      ? () => generatePassword(passwordOptions)
-      : mode === 'passphrase'
-        ? () => generatePassphrase(passphraseOptions)
-        : () => generateUsername(usernameOptions)
+    const generator = state.mode === 'password'
+      ? () => generatePassword(state.passwordOptions)
+      : state.mode === 'passphrase'
+        ? () => generatePassphrase(state.passphraseOptions)
+        : () => generateUsername(state.usernameOptions)
     setResult(generateItems(generator, count))
   }
 
   function setPassword<K extends keyof PasswordOptions>(key: K, value: PasswordOptions[K]) {
-    setPasswordOptions((current) => ({ ...current, [key]: value }))
+    setState((current) => ({ ...current, passwordOptions: { ...current.passwordOptions, [key]: value } }))
   }
 
   function setPassphrase<K extends keyof PassphraseOptions>(key: K, value: PassphraseOptions[K]) {
-    setPassphraseOptions((current) => ({ ...current, [key]: value }))
+    setState((current) => ({ ...current, passphraseOptions: { ...current.passphraseOptions, [key]: value } }))
   }
 
   function setUsername<K extends keyof UsernameOptions>(key: K, value: UsernameOptions[K]) {
-    setUsernameOptions((current) => ({ ...current, [key]: value }))
+    setState((current) => ({ ...current, usernameOptions: { ...current.usernameOptions, [key]: value } }))
   }
 
-  function updateSeparator(nextKind: SeparatorKind, nextCustom = customSeparator) {
-    setSeparatorKind(nextKind)
-    setCustomSeparator(nextCustom)
-    setPassphrase('separator', separatorFromKind(nextKind, nextCustom))
+  function updateSeparator(nextKind: SeparatorKind, nextCustom = state.customSeparator) {
+    setState((current) => ({
+      ...current,
+      separatorKind: nextKind,
+      customSeparator: nextCustom,
+      passphraseOptions: { ...current.passphraseOptions, separator: separatorFromKind(nextKind, nextCustom) },
+    }))
   }
 
-  const entropy = entropyBits(passphraseOptions.wordList, passphraseOptions.wordCount).toFixed(0)
+  const entropy = entropyBits(state.passphraseOptions.wordList, state.passphraseOptions.wordCount).toFixed(0)
   const errorText = result.error ? t[result.error as keyof typeof t] : ''
 
   return (
     <div className="tool-workspace two-col">
       <Panel title={t.settings} actions={(
-        <div className="inline-segmented">
-          <button className={mode === 'password' ? 'active' : ''} type="button" onClick={() => setMode('password')}>{t.generatorPassword}</button>
-          <button className={mode === 'passphrase' ? 'active' : ''} type="button" onClick={() => setMode('passphrase')}>{t.generatorPassphrase}</button>
-          <button className={mode === 'username' ? 'active' : ''} type="button" onClick={() => setMode('username')}>{t.generatorUsername}</button>
-        </div>
+        <>
+          <div className="inline-segmented">
+            <button className={state.mode === 'password' ? 'active' : ''} type="button" onClick={() => setState((current) => ({ ...current, mode: 'password' }))}>{t.generatorPassword}</button>
+            <button className={state.mode === 'passphrase' ? 'active' : ''} type="button" onClick={() => setState((current) => ({ ...current, mode: 'passphrase' }))}>{t.generatorPassphrase}</button>
+            <button className={state.mode === 'username' ? 'active' : ''} type="button" onClick={() => setState((current) => ({ ...current, mode: 'username' }))}>{t.generatorUsername}</button>
+          </div>
+          <button className="text-button" type="button" onClick={resetTool}>{t.restoreDefaults}</button>
+        </>
       )}>
 
-        <label className="field"><span>{t.count}</span><input type="range" min="1" max="100" value={resultCount} onChange={(event) => setResultCount(Number(event.target.value))} /><b>{resultCount}</b></label>
+        <label className="field"><span>{t.count}</span><input type="range" min="1" max="100" value={state.resultCount} onChange={(event) => setState((current) => ({ ...current, resultCount: Number(event.target.value) }))} /><b>{state.resultCount}</b></label>
 
-        {mode === 'password' && (
+        {state.mode === 'password' && (
           <>
-            <label className="field"><span>{t.length}</span><input type="range" min="5" max="128" value={passwordOptions.length} onChange={(event) => setPassword('length', Number(event.target.value))} /><b>{passwordOptions.length}</b></label>
+            <label className="field"><span>{t.length}</span><input type="range" min="5" max="128" value={state.passwordOptions.length} onChange={(event) => setPassword('length', Number(event.target.value))} /><b>{state.passwordOptions.length}</b></label>
             <div className="option-grid">
-              <label className="check-row"><input type="checkbox" checked={passwordOptions.uppercase} onChange={(event) => setPassword('uppercase', event.target.checked)} /> {t.uppercase}</label>
-              <label className="check-row"><input type="checkbox" checked={passwordOptions.lowercase} onChange={(event) => setPassword('lowercase', event.target.checked)} /> {t.lowercase}</label>
-              <label className="check-row"><input type="checkbox" checked={passwordOptions.number} onChange={(event) => setPassword('number', event.target.checked)} /> {t.numbers}</label>
-              <label className="check-row"><input type="checkbox" checked={passwordOptions.special} onChange={(event) => setPassword('special', event.target.checked)} /> {t.specialCharacters}</label>
+              <label className="check-row"><input type="checkbox" checked={state.passwordOptions.uppercase} onChange={(event) => setPassword('uppercase', event.target.checked)} /> {t.uppercase}</label>
+              <label className="check-row"><input type="checkbox" checked={state.passwordOptions.lowercase} onChange={(event) => setPassword('lowercase', event.target.checked)} /> {t.lowercase}</label>
+              <label className="check-row"><input type="checkbox" checked={state.passwordOptions.number} onChange={(event) => setPassword('number', event.target.checked)} /> {t.numbers}</label>
+              <label className="check-row"><input type="checkbox" checked={state.passwordOptions.special} onChange={(event) => setPassword('special', event.target.checked)} /> {t.specialCharacters}</label>
             </div>
-            <label className="check-row"><input type="checkbox" checked={!passwordOptions.ambiguous} onChange={(event) => setPassword('ambiguous', !event.target.checked)} /> {t.avoidAmbiguous}</label>
-            <label className="field"><span>{t.minNumbers}</span><input type="range" min="0" max="9" value={passwordOptions.minNumber} onChange={(event) => setPassword('minNumber', Number(event.target.value))} /><b>{passwordOptions.minNumber}</b></label>
-            <label className="field"><span>{t.minSpecial}</span><input type="range" min="0" max="9" value={passwordOptions.minSpecial} onChange={(event) => setPassword('minSpecial', Number(event.target.value))} /><b>{passwordOptions.minSpecial}</b></label>
+            <label className="check-row"><input type="checkbox" checked={!state.passwordOptions.ambiguous} onChange={(event) => setPassword('ambiguous', !event.target.checked)} /> {t.avoidAmbiguous}</label>
+            <label className="field"><span>{t.minNumbers}</span><input type="range" min="0" max="9" value={state.passwordOptions.minNumber} onChange={(event) => setPassword('minNumber', Number(event.target.value))} /><b>{state.passwordOptions.minNumber}</b></label>
+            <label className="field"><span>{t.minSpecial}</span><input type="range" min="0" max="9" value={state.passwordOptions.minSpecial} onChange={(event) => setPassword('minSpecial', Number(event.target.value))} /><b>{state.passwordOptions.minSpecial}</b></label>
           </>
         )}
 
-        {mode === 'passphrase' && (
+        {state.mode === 'passphrase' && (
           <>
-            <label className="field"><span>{t.wordList}</span><select value={passphraseOptions.wordList} onChange={(event) => setPassphrase('wordList', event.target.value as WordListKind)}><option value="english">{t.englishWordList}</option><option value="chinese">{t.chineseWordList}</option></select></label>
-            <label className="field"><span>{t.wordCount}</span><input type="range" min="3" max="20" value={passphraseOptions.wordCount} onChange={(event) => setPassphrase('wordCount', Number(event.target.value))} /><b>{passphraseOptions.wordCount}</b></label>
-            <label className="field"><span>{t.separator}</span><select value={separatorKind} onChange={(event) => updateSeparator(event.target.value as SeparatorKind)}><option value="hyphen">{t.separatorHyphen}</option><option value="space">{t.separatorSpace}</option><option value="period">{t.separatorPeriod}</option><option value="none">{t.separatorNone}</option><option value="custom">{t.separatorCustom}</option></select></label>
-            {separatorKind === 'custom' && <input className="text-input" value={customSeparator} maxLength={1} placeholder={t.customSeparator} onChange={(event) => updateSeparator('custom', event.target.value)} />}
-            <label className="check-row"><input type="checkbox" checked={passphraseOptions.capitalize} onChange={(event) => setPassphrase('capitalize', event.target.checked)} /> {t.capitalizeWords}</label>
-            <label className="check-row"><input type="checkbox" checked={passphraseOptions.includeNumber} onChange={(event) => setPassphrase('includeNumber', event.target.checked)} /> {t.includeNumber}</label>
+            <label className="field"><span>{t.wordList}</span><select value={state.passphraseOptions.wordList} onChange={(event) => setPassphrase('wordList', event.target.value as WordListKind)}><option value="english">{t.englishWordList}</option><option value="chinese">{t.chineseWordList}</option></select></label>
+            <label className="field"><span>{t.wordCount}</span><input type="range" min="3" max="20" value={state.passphraseOptions.wordCount} onChange={(event) => setPassphrase('wordCount', Number(event.target.value))} /><b>{state.passphraseOptions.wordCount}</b></label>
+            <label className="field"><span>{t.separator}</span><select value={state.separatorKind} onChange={(event) => updateSeparator(event.target.value as SeparatorKind)}><option value="hyphen">{t.separatorHyphen}</option><option value="space">{t.separatorSpace}</option><option value="period">{t.separatorPeriod}</option><option value="none">{t.separatorNone}</option><option value="custom">{t.separatorCustom}</option></select></label>
+            {state.separatorKind === 'custom' && <input className="text-input" value={state.customSeparator} maxLength={1} placeholder={t.customSeparator} onChange={(event) => updateSeparator('custom', event.target.value)} />}
+            <label className="check-row"><input type="checkbox" checked={state.passphraseOptions.capitalize} onChange={(event) => setPassphrase('capitalize', event.target.checked)} /> {t.capitalizeWords}</label>
+            <label className="check-row"><input type="checkbox" checked={state.passphraseOptions.includeNumber} onChange={(event) => setPassphrase('includeNumber', event.target.checked)} /> {t.includeNumber}</label>
             <p className="subtle-line">{t.entropy}: {entropy} {t.bits}</p>
           </>
         )}
 
-        {mode === 'username' && (
+        {state.mode === 'username' && (
           <>
-            <label className="field"><span>{t.usernameType}</span><select value={usernameOptions.type} onChange={(event) => setUsername('type', event.target.value as UsernameKind)}><option value="word">{t.usernameWord}</option><option value="random">{t.usernameRandom}</option><option value="gmailAlias">{t.usernameGmailAlias}</option><option value="catchall">{t.usernameCatchall}</option></select></label>
-            {usernameOptions.type === 'word' && <label className="field"><span>{t.wordList}</span><select value={usernameOptions.wordList} onChange={(event) => setUsername('wordList', event.target.value as WordListKind)}><option value="english">{t.englishWordList}</option><option value="chinese">{t.chineseWordList}</option></select></label>}
-            {usernameOptions.type === 'word' && <label className="check-row"><input type="checkbox" checked={usernameOptions.capitalize} onChange={(event) => setUsername('capitalize', event.target.checked)} /> {t.capitalizeWords}</label>}
-            {usernameOptions.type === 'word' && <label className="check-row"><input type="checkbox" checked={usernameOptions.includeNumber} onChange={(event) => setUsername('includeNumber', event.target.checked)} /> {t.includeNumber}</label>}
-            {usernameOptions.type === 'random' && <label className="field"><span>{t.randomLength}</span><input type="range" min="4" max="32" value={usernameOptions.randomLength} onChange={(event) => setUsername('randomLength', Number(event.target.value))} /><b>{usernameOptions.randomLength}</b></label>}
-            {usernameOptions.type === 'catchall' && <input className="text-input" value={usernameOptions.domain} placeholder={t.domain} onChange={(event) => setUsername('domain', event.target.value)} />}
-            {usernameOptions.type === 'gmailAlias' && (
+            <label className="field"><span>{t.usernameType}</span><select value={state.usernameOptions.type} onChange={(event) => setUsername('type', event.target.value as UsernameKind)}><option value="word">{t.usernameWord}</option><option value="random">{t.usernameRandom}</option><option value="gmailAlias">{t.usernameGmailAlias}</option><option value="catchall">{t.usernameCatchall}</option></select></label>
+            {state.usernameOptions.type === 'word' && <label className="field"><span>{t.wordList}</span><select value={state.usernameOptions.wordList} onChange={(event) => setUsername('wordList', event.target.value as WordListKind)}><option value="english">{t.englishWordList}</option><option value="chinese">{t.chineseWordList}</option></select></label>}
+            {state.usernameOptions.type === 'word' && <label className="check-row"><input type="checkbox" checked={state.usernameOptions.capitalize} onChange={(event) => setUsername('capitalize', event.target.checked)} /> {t.capitalizeWords}</label>}
+            {state.usernameOptions.type === 'word' && <label className="check-row"><input type="checkbox" checked={state.usernameOptions.includeNumber} onChange={(event) => setUsername('includeNumber', event.target.checked)} /> {t.includeNumber}</label>}
+            {state.usernameOptions.type === 'random' && <label className="field"><span>{t.randomLength}</span><input type="range" min="4" max="32" value={state.usernameOptions.randomLength} onChange={(event) => setUsername('randomLength', Number(event.target.value))} /><b>{state.usernameOptions.randomLength}</b></label>}
+            {state.usernameOptions.type === 'catchall' && <input className="text-input" value={state.usernameOptions.domain} placeholder={t.domain} onChange={(event) => setUsername('domain', event.target.value)} />}
+            {state.usernameOptions.type === 'gmailAlias' && (
               <>
-                <input className="text-input" value={usernameOptions.gmailEmail} placeholder={t.gmailEmailAddress} onChange={(event) => setUsername('gmailEmail', event.target.value)} />
+                <input className="text-input" value={state.usernameOptions.gmailEmail} placeholder={t.gmailEmailAddress} onChange={(event) => setUsername('gmailEmail', event.target.value)} />
                 <div className="option-grid">
-                  <label className="check-row"><input type="checkbox" checked={usernameOptions.gmailUseDots} onChange={(event) => setUsername('gmailUseDots', event.target.checked)} /> {t.gmailDotAliases}</label>
-                  <label className="check-row"><input type="checkbox" checked={usernameOptions.gmailUsePlus} onChange={(event) => setUsername('gmailUsePlus', event.target.checked)} /> {t.gmailPlusAliases}</label>
-                  <label className="check-row"><input type="checkbox" checked={usernameOptions.gmailUseCase} onChange={(event) => setUsername('gmailUseCase', event.target.checked)} /> {t.gmailCaseAliases}</label>
-                  <label className="check-row"><input type="checkbox" checked={usernameOptions.gmailUseGooglemail} onChange={(event) => setUsername('gmailUseGooglemail', event.target.checked)} /> {t.gmailGooglemailAliases}</label>
+                  <label className="check-row"><input type="checkbox" checked={state.usernameOptions.gmailUseDots} onChange={(event) => setUsername('gmailUseDots', event.target.checked)} /> {t.gmailDotAliases}</label>
+                  <label className="check-row"><input type="checkbox" checked={state.usernameOptions.gmailUsePlus} onChange={(event) => setUsername('gmailUsePlus', event.target.checked)} /> {t.gmailPlusAliases}</label>
+                  <label className="check-row"><input type="checkbox" checked={state.usernameOptions.gmailUseCase} onChange={(event) => setUsername('gmailUseCase', event.target.checked)} /> {t.gmailCaseAliases}</label>
+                  <label className="check-row"><input type="checkbox" checked={state.usernameOptions.gmailUseGooglemail} onChange={(event) => setUsername('gmailUseGooglemail', event.target.checked)} /> {t.gmailGooglemailAliases}</label>
                 </div>
-                {usernameOptions.gmailUsePlus && <textarea className="small mono" value={usernameOptions.gmailPlusTags} placeholder={t.gmailPlusTagsPlaceholder} onChange={(event) => setUsername('gmailPlusTags', event.target.value)} />}
+                {state.usernameOptions.gmailUsePlus && <textarea className="small mono" value={state.usernameOptions.gmailPlusTags} placeholder={t.gmailPlusTagsPlaceholder} onChange={(event) => setUsername('gmailPlusTags', event.target.value)} />}
                 <p className="subtle-line">{t.gmailAliasHint}</p>
               </>
             )}
