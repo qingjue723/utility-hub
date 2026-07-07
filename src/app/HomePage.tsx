@@ -15,6 +15,7 @@ const categoryLabelKeys = {
   Finance: 'categoryFinance',
   Generate: 'categoryGenerate',
   Web: 'categoryWeb',
+  API: 'categoryApi',
 } as const
 
 export function HomePage() {

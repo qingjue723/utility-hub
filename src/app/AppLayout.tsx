@@ -24,12 +24,13 @@ export function AppLayout() {
       <div className="grain" />
       <header className="nav-shell" aria-label={t.primaryNavigation}>
         <div className="nav-inner">
-          <Link className="brand-mark" to="/" aria-label={t.homeLabel}>
-            <span className="brand-glyph"><Sparkle size={16} weight="fill" /></span>
-            <span className="brand-copy">
+          <div className="brand-mark">
+            <Link className="brand-home" to="/" aria-label={t.homeLabel}>
+              <span className="brand-glyph"><Sparkle size={16} weight="fill" /></span>
               <span className="brand-name">{t.appName}</span>
-            </span>
-          </Link>
+            </Link>
+            <a className="brand-author" href="https://blog.qjyg.de" target="_blank" rel="noreferrer">{t.authorName}</a>
+          </div>
           <div className="nav-actions">
             <button className={favoritesOnly ? 'nav-button active' : 'nav-button'} type="button" onClick={toggleFavoriteFilter} aria-label={favoriteFilterLabel} aria-pressed={favoritesOnly}>
               <Star size={16} weight={favoritesOnly ? 'fill' : 'regular'} />

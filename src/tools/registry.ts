@@ -1,4 +1,4 @@
-import { BracketsCurly, Code, CurrencyDollar, Fingerprint, Hash, Key, LinkSimple, ListChecks, LockKey, MapPin, Password } from '@phosphor-icons/react'
+import { BracketsCurly, Code, CurrencyDollar, Fingerprint, Hash, Key, LinkSimple, ListChecks, LockKey, MapPin, Password, PlugsConnected } from '@phosphor-icons/react'
 import type { Icon } from '@phosphor-icons/react'
 import type { ComponentType } from 'react'
 
@@ -111,6 +111,15 @@ export const tools: ToolDefinition[] = [
     keywords: ['html', 'preview', 'iframe', 'web'],
     icon: Code,
     load: () => import('./web/HtmlPreviewTool').then((module) => ({ default: module.HtmlPreviewTool })),
+  },
+  {
+    id: 'api-format-tester',
+    category: 'API',
+    name: { zh: 'API 格式测试台', en: 'API Format Tester' },
+    description: { zh: '浏览器直连测试 Chat、Responses、Claude 和 Gemini 接口格式能力。', en: 'Test Chat, Responses, Claude, and Gemini API format capabilities from the browser.' },
+    keywords: ['api', 'openai', 'responses', 'chat completions', 'claude', 'gemini', 'sse', 'tool call', '接口', '格式测试', '模型列表', '流式', '工具调用'],
+    icon: PlugsConnected,
+    load: () => import('./api/ApiFormatTool').then((module) => ({ default: module.ApiFormatTool })),
   },
 ]
 
