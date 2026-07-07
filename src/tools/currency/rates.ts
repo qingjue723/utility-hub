@@ -55,7 +55,7 @@ async function fromFawaz(base: string, url: string): Promise<RatesResult> {
   return {
     base,
     date: typeof data.date === 'string' ? data.date : new Date().toISOString().slice(0, 10),
-    provider: 'fawazahmed0/currency-api',
+    provider: 'fawazahmed0/exchange-api',
     rates: normalizeRates(base, rawRates as Record<string, number>),
     cached: false,
   }
@@ -91,8 +91,8 @@ export async function fetchRates(base: string): Promise<RatesResult> {
   if (cached) return cached
 
   const providers = [
-    () => fromFawaz(normalizedBase, 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies'),
     () => fromFawaz(normalizedBase, 'https://latest.currency-api.pages.dev/v1/currencies'),
+    () => fromFawaz(normalizedBase, 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies'),
     () => fromOpenErApi(normalizedBase),
     () => fromFrankfurter(normalizedBase),
   ]
