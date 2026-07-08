@@ -1,0 +1,13 @@
+{
+  "name": "清绝的小工具箱",
+  "short_name": "工具箱",
+  "description": "在浏览器里完成格式化、加密、编码和预览。",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fbfaf7",
+  "theme_color": "#fbfaf7",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

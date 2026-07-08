@@ -3,6 +3,7 @@ import { useDeferredValue, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import { useFavorites } from './FavoritesContext'
 import { useLocale } from './providers/LocaleProvider'
+import { usePageMeta } from '../hooks/usePageMeta'
 import { ToolCard } from '../components/ToolCard'
 import { tools } from '../tools/registry'
 
@@ -25,6 +26,8 @@ export function HomePage() {
   const favorites = useFavorites()
   const { locale, t } = useLocale()
   const favoritesOnly = searchParams.get('favorites') === '1'
+
+  usePageMeta(t.appName + ' - 一些常用的网页工具集', t.heroSubtitle)
 
   const filteredTools = useMemo(() => {
     const sourceTools = favoritesOnly ? tools.filter((tool) => favorites.items.includes(tool.id)) : tools
@@ -54,7 +57,7 @@ export function HomePage() {
   }, [groupedTools, locale, t])
 
   return (
-    <main className="page home-page">
+    <main className="page home-page" id="main-content">
       <section className="home-search reveal">
         <label className="search-box" aria-label={t.searchLabel}>
           <MagnifyingGlass size={19} />

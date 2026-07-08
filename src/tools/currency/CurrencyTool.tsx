@@ -87,8 +87,15 @@ export function CurrencyTool() {
   }, [query])
 
   const activeNumericAmount = parseAmount(toolState.activeAmount)
+  function formatDate(r: RatesResult) {
+    if (!r.cached || !r.savedAt) return r.date
+    const d = new Date(r.savedAt)
+    const pad = (n: number) => String(n).padStart(2, '0')
+    return `${r.date} ${pad(d.getHours())}:${pad(d.getMinutes())}`
+  }
+
   const status = rates
-    ? `${rates.cached ? t.currencyCachedRates : t.currencyLiveRates} · ${rates.provider} · ${rates.date}`
+    ? `${rates.cached ? t.currencyCachedRates : t.currencyLiveRates} · ${rates.provider} · ${formatDate(rates)}`
     : loading
       ? t.currencyLoadingRates
       : t.currencyWaitingRates

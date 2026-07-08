@@ -21,6 +21,7 @@ export function AppLayout() {
 
   return (
     <div className="app-shell">
+      <a className="skip-link" href="#main-content">{t.skipToContent}</a>
       <div className="grain" />
       <header className="nav-shell" aria-label={t.primaryNavigation}>
         <div className="nav-inner">

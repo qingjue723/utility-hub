@@ -6,6 +6,7 @@ export type RatesResult = {
   provider: string
   rates: Record<string, number>
   cached: boolean
+  savedAt?: number
 }
 
 const CACHE_TTL_MS = 30 * 60 * 1000
@@ -20,7 +21,7 @@ function cacheKey(base: string) {
 function readCache(base: string): RatesResult | null {
   const cached = readStoredValue<CacheEntry>(cacheKey(base))
   if (!cached || Date.now() - cached.savedAt > CACHE_TTL_MS) return null
-  return { base: cached.base, date: cached.date, provider: cached.provider, rates: cached.rates, cached: true }
+  return { base: cached.base, date: cached.date, provider: cached.provider, rates: cached.rates, cached: true, savedAt: cached.savedAt }
 }
 
 function writeCache(result: Omit<RatesResult, 'cached'>) {
